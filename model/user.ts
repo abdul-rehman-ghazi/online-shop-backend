@@ -7,9 +7,15 @@ import config from 'config';
 export interface IUser extends Document {
   name: string;
   email: string;
+  phone: string;
   password: string;
   generateAuthToken: () => string;
-  isAdmin: boolean;
+  role: string;
+  image: string;
+  gender: string;
+  addresses: any[];
+  cart: any[];
+  orders: any[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -17,9 +23,16 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
     minlength: 5,
-    maxlength: 50
+    maxlength: 255
   },
   email: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+    unique: true
+  },
+  phone: {
     type: String,
     required: true,
     minlength: 5,
@@ -32,15 +45,28 @@ const userSchema = new Schema<IUser>({
     minlength: 5,
     maxlength: 1024
   },
-  isAdmin: {
-    type: Boolean,
-    default: false
+  role: {
+    type: String,
+    enum: ['admin', 'customer', 'seller'],
+    default: 'customer'
+  },
+  image: {
+    type: String,
+    minlength: 5,
+    maxlength: 1024,
+    default:
+      'https://www.dlf.pt/dfpng/middlepng/248-2480658_profile-icon-png-image-free-download-searchpng-profile.png'
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other'],
+    required: true
   }
 });
 
 userSchema.methods.generateAuthToken = function (): string {
   return jwt.sign(
-    { _id: this._id, isAdmin: this.isAdmin },
+    { _id: this._id, role: this.role },
     config.get('jwtPrivateKey')
   );
 };

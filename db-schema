@@ -1,0 +1,68 @@
+E-POS Database Collection Structure
+
+1) User
+	- _id: string
+	- role: enum(admin, customer, seller)
+	- name: string 3-255
+	- email: string 0-255
+	- contact: string 0-255
+	- image: string
+	- addresses[]
+		- _id: string
+		- label: string 3-255
+		- text: string 3-1024
+		- latitude: number
+		- longitude: number
+		- note: string 0-1024
+	- gender: enum(male, female, other)
+	- cart[]
+		- itemId: string
+		- variantId: string
+		- quantity: number
+	- orders[]
+		- _id: string
+		- items[]
+			- _id: string
+			- name: string 3-255 (name - variant name)
+			- price: number
+			- quantity: number
+		- statuses[]
+			- status: enum(pending, accepted, ready, delivered, cancelled)
+			- dateTime: date
+		- subTotal: number
+		- type: enum(dineIn, collection, delivery)
+		- deliveryCharges: number
+		- paymentMethod: enum(cod, card)
+		- total: number
+		- recievedBy: string
+		- createdAt: date
+		- updatedAt: date
+
+2) Product
+	- _id: string
+	- name: string 3-255
+	- description: string 3-1024
+	- image: string
+	- category
+		- _id: string
+		- name: string 3-255
+	- price: number
+	- variant
+		- _id: string
+		- name: string 3-255
+		- unit: string 1-16
+		- variants[]
+			- _id: string
+			- price: number
+			- value: number
+	- relatedProductIds: [string]
+	- reviews[]
+		- userId: string
+		- rating: number 1.0 - 5.0
+		- text: string 3-1024
+	- averageReview: number
+		
+3) Category
+	- _id: string
+	- name: string 3-255
+	- description: string 3-1024

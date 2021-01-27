@@ -6,9 +6,11 @@ import users from '../routes/users';
 import auth from '../routes/auth';
 import rentals from '../routes/rentals';
 import { error } from '../middleware/error';
+import bodyParser from "body-parser";
 
 export default (app: Express) => {
   app.use(express.json());
+  app.use(bodyParser.urlencoded({extended: true}))
   app.use('/api/genres', genres);
   app.use('/api/customers', customers);
   app.use('/api/movies', movies);
