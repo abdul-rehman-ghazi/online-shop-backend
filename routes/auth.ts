@@ -3,6 +3,8 @@ import User, { IUser } from '../model/user';
 import bcrypt from 'bcrypt';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
+import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
+import lodash from 'lodash';
 
 const router = express.Router();
 
@@ -11,14 +13,20 @@ router.post('/', async (req: Request, res: Response) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   let user: IUser = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send('Invalid email or password.');
+  if (!user)
+    return res
+      .status(400)
+      .send(baseErrorResponse('Invalid email or password.'));
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
-  if (!validPassword) return res.status(400).send('Invalid email or password.');
+  if (!validPassword)
+    return res
+      .status(400)
+      .send(baseErrorResponse('Invalid email or password.'));
 
-  const token: string = user.generateAuthToken();
+  user.accessToken = user.generateAuthToken();
 
-  res.send(token);
+  res.send(baseResponse(user.response()));
 });
 
 const validate = (request: any) => {

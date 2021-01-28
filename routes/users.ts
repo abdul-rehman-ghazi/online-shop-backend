@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import express, { Request, Response } from 'express';
 import User, { IUser, validateCustomer } from '../model/user';
 import * as bcrypt from 'bcrypt';
@@ -8,10 +7,8 @@ import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
 const router = express.Router();
 
 router.get('/me', auth, async (req: Request, res: Response) => {
-  const user: IUser = await User.findById(req.body.user._id).select(
-    '-password'
-  );
-  res.send(user);
+  const user: IUser = await User.findById(req.body.user._id);
+  res.send(baseResponse(user.response()));
 });
 
 router.post('/', async (req: Request, res: Response) => {
@@ -30,22 +27,7 @@ router.post('/', async (req: Request, res: Response) => {
   await user.save();
 
   user.accessToken = user.generateAuthToken();
-  res.send(
-    baseResponse(
-      _.pick<IUser>(user, [
-        'accessToken',
-        '_id',
-        'name',
-        'email',
-        'phone',
-        'image',
-        'gender',
-        'status',
-        'role'
-      ]),
-      'User created successfully.'
-    )
-  );
+  res.send(baseResponse(user.response(), 'User created successfully.'));
 });
 
 export default router;

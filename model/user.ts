@@ -7,6 +7,7 @@ import EStatus from './enum/EStatus';
 import EGender from './enum/EGender';
 import ERole from './enum/ERole';
 import { validationOptions } from '../util/utils';
+import * as _ from 'lodash';
 
 export interface IUser extends Document {
   accessToken: string;
@@ -22,6 +23,7 @@ export interface IUser extends Document {
   addresses: any[];
   cart: any[];
   orders: any[];
+  response: () => Partial<IUser>;
 }
 
 export interface IUserCustomerInput extends Document {
@@ -88,6 +90,20 @@ userSchema.methods.generateAuthToken = function (): string {
     { _id: this._id, role: this.role, status: this.status },
     config.get('jwtPrivateKey')
   );
+};
+
+userSchema.methods.response = function (): Partial<IUser> {
+  return _.pick<IUser>(this, [
+    'accessToken',
+    '_id',
+    'name',
+    'email',
+    'phone',
+    'image',
+    'gender',
+    'status',
+    'role'
+  ]);
 };
 
 export const validateCustomer = (customerInput: IUserCustomerInput) => {
