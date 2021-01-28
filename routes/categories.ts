@@ -35,7 +35,7 @@ router.put(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    const category: ICategory = await Category.findById(req.params.id);
+    let category: ICategory = await Category.findById(req.params.id);
     if (!category)
       return res
         .status(404)
@@ -43,7 +43,8 @@ router.put(
           baseErrorResponse('The category with the given ID was not found.')
         );
 
-    error = validateCategory(req.body);
+    ({ error } = validateCategory(req.body));
+
     if (error)
       return res.status(400).send(baseErrorResponse(error.details[0].message));
 
