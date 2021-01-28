@@ -66,4 +66,4 @@ E-POS Database Collection Structure
 3) Category
 	- _id: string
 	- name: string 3-255
-	- description: string 3-1024
+	- description: string 5-1024
