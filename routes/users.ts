@@ -55,4 +55,20 @@ router.post(
   }
 );
 
+router.post(
+  '/admin',
+  validateSignUpRequest,
+  async (req: Request, res: Response) => {
+    const user = new User(req.body);
+    user.role = ERole.ADMIN;
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+
+    await user.save();
+
+    user.accessToken = user.generateAuthToken();
+    res.send(baseResponse(user.response(), 'Admin created successfully.'));
+  }
+);
+
 export default router;

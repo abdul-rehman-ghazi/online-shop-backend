@@ -1,4 +1,4 @@
-import { Document, Schema } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
 import { validationOptions } from '../util/utils';
@@ -12,7 +12,7 @@ export const categorySchema = new Schema<ICategory>({
   name: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 3,
     maxlength: 255
   },
   description: {
@@ -25,9 +25,11 @@ export const categorySchema = new Schema<ICategory>({
 
 export const validateCategory = (category: ICategory) => {
   const schema: ObjectSchema<ICategory> = Joi.object<ICategory>({
-    name: Joi.string().min(5).max(255).required(),
+    name: Joi.string().min(3).max(255).required(),
     description: Joi.string().min(5).max(1024).required()
   });
 
   return schema.validate(category, validationOptions);
 };
+
+export default model<ICategory>('Category', categorySchema);
