@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
 import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
 import lodash from 'lodash';
+import { validationOptions } from '../util/utils';
 
 const router = express.Router();
 
@@ -35,7 +36,7 @@ const validate = (request: any) => {
     password: Joi.string().min(5).max(1024).required()
   });
 
-  return schema.validate(request);
+  return schema.validate(request, validationOptions);
 };
 
 export default router;

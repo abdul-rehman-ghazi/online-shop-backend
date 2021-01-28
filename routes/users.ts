@@ -51,7 +51,7 @@ router.post(
     await user.save();
 
     user.accessToken = user.generateAuthToken();
-    res.send(baseResponse(user.response(), 'User created successfully.'));
+    res.send(baseResponse(user.response(), 'Seller created successfully.'));
   }
 );
 

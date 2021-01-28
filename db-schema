@@ -3,10 +3,10 @@ E-POS Database Collection Structure
 1) User
 	- _id: string
 	- role: enum(admin, customer, seller)
-	- name: string 3-255
+	- name: string 5-255
 	- status: enum(pending, active, blocked)
-	- email: string 0-255
-	- contact: string 0-255
+	- email: string 5-255
+	- contact: string 5-255
 	- image: string
 	- addresses[]
 		- _id: string
@@ -24,7 +24,7 @@ E-POS Database Collection Structure
 		- _id: string
 		- items[]
 			- _id: string
-			- name: string 3-255 (name - variant name)
+			- name: string 5-255 (name - variant name)
 			- price: number
 			- quantity: number
 		- statuses[]
@@ -41,28 +41,28 @@ E-POS Database Collection Structure
 
 2) Product
 	- _id: string
-	- name: string 3-255
-	- description: string 3-1024
+	- name: string 5-255
+	- description: string 5-1024
 	- image: string
 	- category
 		- _id: string
-		- name: string 3-255
+		- name: string 5-255
 	- price: number
-	- variant
+	- variantType
 		- _id: string
-		- name: string 3-255
+		- name: string 5-255
 		- unit: string 1-16
-		- variants[]
+		- variant[]
 			- _id: string
 			- price: number
-			- value: number
+			- value: string 1-16
 	- relatedProductIds: [string]
 	- reviews[]
 		- userId: string
 		- rating: number 1.0 - 5.0
 		- text: string 3-1024
 	- averageReview: number
-		
+
 3) Category
 	- _id: string
 	- name: string 3-255
