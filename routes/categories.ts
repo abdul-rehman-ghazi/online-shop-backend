@@ -59,6 +59,9 @@ router.delete(
   '/:id',
   [auth, hasRole(ERole.ADMIN)],
   async (req: Request, res: Response) => {
+    let { error } = validateObjectId(req.params.id);
+    if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
+
     const category: ICategory = await Category.findById(req.params.id);
     if (!category)
       return res
