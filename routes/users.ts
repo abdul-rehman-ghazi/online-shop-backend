@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import express, { Request, Response } from 'express';
-import User, { IUser, validateUser } from '../model/user';
+import User, { IUser, validateCustomer } from '../model/user';
 import * as bcrypt from 'bcrypt';
 import { auth } from '../middleware/auth';
+import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
 
 const router = express.Router();
 
@@ -14,23 +15,36 @@ router.get('/me', auth, async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  const { error } = validateCustomer(req.body);
+  if (error)
+    return res.status(400).send(baseErrorResponse(error.details[0].message));
 
   let user: IUser = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send('User already registered.');
+  if (user)
+    return res.status(400).send(baseErrorResponse('User already registered.'));
 
-  user = new User(
-    _.pick<IUser>(req.body, ['name', 'email', 'password'])
-  );
+  user = new User(req.body);
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
 
   await user.save();
 
-  const token: string = user.generateAuthToken();
-  res.header('x-auth-token', token).send(
-    _.pick<IUser>(user, ['_id', 'name', 'email'])
+  user.accessToken = user.generateAuthToken();
+  res.send(
+    baseResponse(
+      _.pick<IUser>(user, [
+        'accessToken',
+        '_id',
+        'name',
+        'email',
+        'phone',
+        'image',
+        'gender',
+        'status',
+        'role'
+      ]),
+      'User created successfully.'
+    )
   );
 });
 

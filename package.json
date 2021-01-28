@@ -1,7 +1,7 @@
 {
-  "name": "practice",
+  "name": "e-pos",
   "version": "1.0.0",
-  "description": "Practice from Code With Mosh tutorial",
+  "description": "E-POS",
   "main": "index.ts",
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -39,8 +39,7 @@
     "run": "nodemon"
   },
   "keywords": [
-    "practice",
-    "mosh",
+    "e-pos",
     "code"
   ],
   "author": "Abdul Rehman",

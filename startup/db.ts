@@ -3,7 +3,7 @@ import winston from 'winston';
 
 export default () => {
   mongoose
-    .connect('mongodb://localhost/practice', {
+    .connect('mongodb://localhost/e-pos', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true

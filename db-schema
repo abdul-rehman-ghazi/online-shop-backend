@@ -4,6 +4,7 @@ E-POS Database Collection Structure
 	- _id: string
 	- role: enum(admin, customer, seller)
 	- name: string 3-255
+	- status: enum(pending, active, blocked)
 	- email: string 0-255
 	- contact: string 0-255
 	- image: string

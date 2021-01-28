@@ -1,0 +1,3 @@
+1) Account activation through email
+2) Set and update profile picture
+3) Update User details
