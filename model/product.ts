@@ -1,15 +1,16 @@
+import * as mongoose from 'mongoose';
 import { Document, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
-import jwt from 'jsonwebtoken';
-import config from 'config';
-import EGender from './enum/EGender';
-import ERole from './enum/ERole';
 import { validationOptions } from '../util/utils';
-import * as _ from 'lodash';
 import { categorySchema, ICategory } from './category';
-import { IVariantType, variantTypeSchema } from './variantType';
-import { IReview } from './review';
+import {
+  IVariantType,
+  joiVariantTypeSchema,
+  variantTypeSchema
+} from './variantType';
+import { IReview, reviewSchema } from './review';
+import { JoiObjectId } from '../startup/validation';
 
 export interface IProduct extends Document {
   name: string;
@@ -48,8 +49,7 @@ const productSchema = new Schema<IProduct>({
     type: String,
     minlength: 5,
     maxlength: 1024,
-    default:
-      'https://www.dlf.pt/dfpng/middlepng/248-2480658_profile-icon-png-image-free-download-searchpng-profile.png'
+    default: 'https://i.stack.imgur.com/y9DpT.jpg'
   },
   category: {
     type: categorySchema,
@@ -64,55 +64,42 @@ const productSchema = new Schema<IProduct>({
     type: variantTypeSchema,
     default: null
   },
-  relatedProductIds: [
-    {
-      type: ObjectId,
-      enum: Object.values(ERole),
-      default: ERole.CUSTOMER
-    }
-  ],
-
-  gender: {
-    type: EGender,
-    enum: Object.values(EGender),
-    required: true
+  relatedProductIds: {
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: 'Product'
+      }
+    ],
+    default: null
+  },
+  reviews: {
+    type: [reviewSchema],
+    default: []
+  },
+  averageReview: {
+    type: Number,
+    default: null,
+    min: 0,
+    max: 5.0
   }
 });
 
-productSchema.methods.generateAuthToken = function (): string {
-  return jwt.sign(
-    { _id: this._id, role: this.role, status: this.status },
-    config.get('jwtPrivateKey')
-  );
-};
-
 productSchema.methods.response = function (): Partial<IProduct> {
-  return _.pick<IProduct>(this, [
-    'accessToken',
-    '_id',
-    'name',
-    'email',
-    'phone',
-    'image',
-    'gender',
-    'status',
-    'role'
-  ]);
+  return this;
 };
 
-export const validateUser = (userInput: IProductInput) => {
+export const validateProduct = (productInput: IProductInput) => {
   const schema: ObjectSchema<IProductInput> = Joi.object<IProductInput>({
-    name: Joi.string().min(5).max(50).required(),
-    email: Joi.string().min(5).max(255).required().email(),
-    phone: Joi.string().min(5).max(255).required(),
-    password: Joi.string().min(5).max(1024).required(),
-    image: Joi.string().min(5).max(255),
-    gender: Joi.string()
-      .valid(...Object.values(EGender))
-      .required()
+    name: Joi.string().min(5).max(255).required(),
+    description: Joi.string().min(5).max(1024).required(),
+    image: Joi.string(),
+    categoryId: JoiObjectId().required(),
+    variant: joiVariantTypeSchema.required(),
+    relatedProductIds: Joi.array().items(JoiObjectId())
   });
 
-  return schema.validate(userInput, validationOptions);
+  return schema.validate(productInput, validationOptions);
 };
 
-export default model<IProduct>('User', productSchema);
+export default model<IProduct>('Product', productSchema);

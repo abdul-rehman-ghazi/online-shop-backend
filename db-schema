@@ -60,8 +60,8 @@ E-POS Database Collection Structure
 	- reviews[]
 		- userId: string
 		- rating: number 1.0 - 5.0
-		- text: string 3-1024
-	- averageReview: number
+		- text: string 5-1024
+	- averageReview: number 1.0 - 5.0
 
 3) Category
 	- _id: string

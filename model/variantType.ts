@@ -1,5 +1,7 @@
-import { IVariant, variantSchema } from './variant';
+import { IVariant, joiVariantSchema, variantSchema } from './variant';
 import { Document, Schema } from 'mongoose';
+import * as Joi from 'joi';
+import { ObjectSchema } from 'joi';
 
 export interface IVariantType extends Document {
   name: string;
@@ -29,3 +31,11 @@ export const variantTypeSchema = new Schema<IVariantType>({
     default: null
   }
 });
+
+export const joiVariantTypeSchema: ObjectSchema<IVariantType> = Joi.object<IVariantType>(
+  {
+    name: Joi.string().min(5).max(255).required(),
+    unit: Joi.string().min(1).max(16),
+    variants: Joi.array().items(joiVariantSchema).min(2).required()
+  }
+);
