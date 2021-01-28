@@ -26,7 +26,7 @@ export interface IUser extends Document {
   response: () => Partial<IUser>;
 }
 
-export interface IUserCustomerInput extends Document {
+export interface IUserInput extends Document {
   name: string;
   email: string;
   phone: string;
@@ -106,21 +106,19 @@ userSchema.methods.response = function (): Partial<IUser> {
   ]);
 };
 
-export const validateCustomer = (customerInput: IUserCustomerInput) => {
-  const schema: ObjectSchema<IUserCustomerInput> = Joi.object<IUserCustomerInput>(
-    {
-      name: Joi.string().min(5).max(50).required(),
-      email: Joi.string().min(5).max(255).required().email(),
-      phone: Joi.string().min(5).max(255).required(),
-      password: Joi.string().min(5).max(1024).required(),
-      image: Joi.string().min(5).max(255),
-      gender: Joi.string()
-        .valid(...Object.values(EGender))
-        .required()
-    }
-  );
+export const validateUser = (userInput: IUserInput) => {
+  const schema: ObjectSchema<IUserInput> = Joi.object<IUserInput>({
+    name: Joi.string().min(5).max(50).required(),
+    email: Joi.string().min(5).max(255).required().email(),
+    phone: Joi.string().min(5).max(255).required(),
+    password: Joi.string().min(5).max(1024).required(),
+    image: Joi.string().min(5).max(255),
+    gender: Joi.string()
+      .valid(...Object.values(EGender))
+      .required()
+  });
 
-  return schema.validate(customerInput, validationOptions);
+  return schema.validate(userInput, validationOptions);
 };
 
 export default model<IUser>('User', userSchema);
