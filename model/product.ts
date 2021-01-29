@@ -16,7 +16,7 @@ export interface IProduct extends Document {
   name: string;
   description: string;
   image: string;
-  category: ICategory;
+  category: string;
   price: number;
   variant: IVariantType;
   relatedProductIds: string[];
@@ -30,7 +30,7 @@ export interface IProductInput {
   description: string;
   price: number;
   image: string;
-  categoryId: string;
+  category: string;
   variant?: IVariantType;
   relatedProductIds: string[];
 }
@@ -56,8 +56,8 @@ const productSchema = new Schema<IProduct>(
       default: 'https://i.stack.imgur.com/y9DpT.jpg'
     },
     category: {
-      type: categorySchema,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category'
     },
     price: {
       type: Number,
@@ -68,15 +68,12 @@ const productSchema = new Schema<IProduct>(
       type: variantTypeSchema,
       default: null
     },
-    relatedProductIds: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product'
-        }
-      ],
-      default: null
-    },
+    relatedProductIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+      }
+    ],
     reviews: {
       type: [reviewSchema],
       default: []
@@ -88,10 +85,8 @@ const productSchema = new Schema<IProduct>(
       max: 5.0
     },
     sellerId: {
-      type: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
   },
   { timestamps: true }
@@ -107,7 +102,7 @@ export const validateProduct = (productInput: IProductInput) => {
     description: Joi.string().min(3).max(1024).required(),
     price: Joi.number().min(0).required(),
     image: Joi.string(),
-    categoryId: JoiObjectId().required(),
+    category: JoiObjectId().required(),
     variant: joiVariantTypeSchema,
     relatedProductIds: Joi.array().items(JoiObjectId())
   });

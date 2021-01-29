@@ -22,18 +22,22 @@ router.post(
     if (error)
       return res.status(400).send(baseErrorResponse(error.details[0].message));
 
-    const category = await Category.findById(req.body.categoryId);
+    const category = await Category.findById(req.body.category);
     if (!category)
-      res.status(400).send(baseErrorResponse('Invalid category id.'));
+      return res.status(400).send(baseErrorResponse('Invalid category id.'));
 
     const product: IProduct = new Product({
       ...req.body,
-      sellerId: req.body.user._id,
-      category: { _id: category._id, name: category.name }
+      sellerId: req.body.user._id
     });
 
-    await product.save();
-    res.send(baseResponse(product));
+    product
+      .save()
+      .then((value: IProduct) =>
+        value.populate('category', 'name').execPopulate()
+      )
+      .then((value: IProduct) => res.send(baseResponse(value)))
+      .catch((reason) => res.status(400).send(baseErrorResponse(reason)));
   }
 );
 
@@ -61,11 +65,11 @@ router.put(
       res.status(400).send(baseErrorResponse('Invalid category id.'));
 
     updateDocument<IProduct>(product, Product, req.body);
-    product.category._id = category._id;
-    product.category.name = category.name;
 
-    await product.save();
-    res.send(baseResponse(product));
+    product
+      .save()
+      .then((value: IProduct) => res.send(baseResponse(value)))
+      .catch((reason) => res.status(400).send(baseErrorResponse(reason)));
   }
 );
 
