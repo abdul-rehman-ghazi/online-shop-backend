@@ -40,7 +40,7 @@ const userSchema = new Schema<IUser>(
     name: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 255
     },
     status: {
@@ -51,20 +51,20 @@ const userSchema = new Schema<IUser>(
     email: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 255,
       unique: true
     },
     phone: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 255
     },
     password: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024
     },
     role: {
@@ -74,7 +74,7 @@ const userSchema = new Schema<IUser>(
     },
     image: {
       type: String,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024,
       default:
         'https://www.dlf.pt/dfpng/middlepng/248-2480658_profile-icon-png-image-free-download-searchpng-profile.png'
@@ -111,11 +111,11 @@ userSchema.methods.response = function (): Partial<IUser> {
 
 export const validateUser = (userInput: IUserInput) => {
   const schema: ObjectSchema<IUserInput> = Joi.object<IUserInput>({
-    name: Joi.string().min(5).max(50).required(),
-    email: Joi.string().min(5).max(255).required().email(),
-    phone: Joi.string().min(5).max(255).required(),
-    password: Joi.string().min(5).max(1024).required(),
-    image: Joi.string().min(5).max(255),
+    name: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(255).required().email(),
+    phone: Joi.string().min(3).max(255).required(),
+    password: Joi.string().min(3).max(1024).required(),
+    image: Joi.string().min(3).max(255),
     gender: Joi.string()
       .valid(...Object.values(EGender))
       .required()

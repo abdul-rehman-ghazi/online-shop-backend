@@ -13,7 +13,7 @@ export const variantTypeSchema = new Schema<IVariantType>({
   name: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 3,
     maxlength: 255
   },
   unit: {
@@ -34,7 +34,7 @@ export const variantTypeSchema = new Schema<IVariantType>({
 
 export const joiVariantTypeSchema: ObjectSchema<IVariantType> = Joi.object<IVariantType>(
   {
-    name: Joi.string().min(5).max(255).required(),
+    name: Joi.string().min(3).max(255).required(),
     unit: Joi.string().min(1).max(16),
     variants: Joi.array().items(joiVariantSchema).min(2).required()
   }

@@ -28,6 +28,7 @@ export interface IProduct extends Document {
 export interface IProductInput {
   name: string;
   description: string;
+  price: number;
   image: string;
   categoryId: string;
   variant?: IVariantType;
@@ -39,18 +40,18 @@ const productSchema = new Schema<IProduct>(
     name: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 255
     },
     description: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024
     },
     image: {
       type: String,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024,
       default: 'https://i.stack.imgur.com/y9DpT.jpg'
     },
@@ -102,11 +103,12 @@ productSchema.methods.response = function (): Partial<IProduct> {
 
 export const validateProduct = (productInput: IProductInput) => {
   const schema: ObjectSchema<IProductInput> = Joi.object<IProductInput>({
-    name: Joi.string().min(5).max(255).required(),
-    description: Joi.string().min(5).max(1024).required(),
+    name: Joi.string().min(3).max(255).required(),
+    description: Joi.string().min(3).max(1024).required(),
+    price: Joi.number().min(0).required(),
     image: Joi.string(),
     categoryId: JoiObjectId().required(),
-    variant: joiVariantTypeSchema.required(),
+    variant: joiVariantTypeSchema,
     relatedProductIds: Joi.array().items(JoiObjectId())
   });
 

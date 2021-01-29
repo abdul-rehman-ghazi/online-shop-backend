@@ -19,7 +19,7 @@ export const categorySchema = new Schema<ICategory>(
     description: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024
     }
   },
@@ -29,7 +29,7 @@ export const categorySchema = new Schema<ICategory>(
 export const validateCategory = (category: ICategory) => {
   const schema: ObjectSchema<ICategory> = Joi.object<ICategory>({
     name: Joi.string().min(3).max(255).required(),
-    description: Joi.string().min(5).max(1024).required()
+    description: Joi.string().min(3).max(1024).required()
   });
 
   return schema.validate(category, validationOptions);

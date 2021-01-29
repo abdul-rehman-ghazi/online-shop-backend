@@ -4,9 +4,9 @@ import { baseErrorResponse } from '../type/BaseResponse';
 
 export const hasRole = (roles: ERole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    roles.forEach((value) => {
-      if (req.body.user.role == value) return next();
-    });
-    return res.status(403).send(baseErrorResponse('Access denied.'));
+    if (!roles.includes(req.body.user.role))
+      return res.status(403).send(baseErrorResponse('Access denied.'));
+
+    next();
   };
 };

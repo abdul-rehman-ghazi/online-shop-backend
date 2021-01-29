@@ -23,7 +23,7 @@ export const reviewSchema = new Schema<IReview>(
     text: {
       type: String,
       required: true,
-      minlength: 5,
+      minlength: 3,
       maxlength: 1024
     }
   },

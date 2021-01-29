@@ -26,10 +26,11 @@ router.post(
     if (!category)
       res.status(400).send(baseErrorResponse('Invalid category id.'));
 
-    const product: IProduct = new Product(req.body);
-    product.sellerId = req.body.user._id;
-    product.category._id = category._id;
-    product.category.name = category.name;
+    const product: IProduct = new Product({
+      ...req.body,
+      sellerId: req.body.user._id,
+      category: { _id: category._id, name: category.name }
+    });
 
     await product.save();
     res.send(baseResponse(product));

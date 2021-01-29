@@ -1,0 +1,1 @@
+mongoimport --db e-pos --collection categories --drop --file ./seeders/categories.json
