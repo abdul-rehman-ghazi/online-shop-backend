@@ -8,20 +8,23 @@ export interface ICategory extends Document {
   description: string;
 }
 
-export const categorySchema = new Schema<ICategory>({
-  name: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 255
+export const categorySchema = new Schema<ICategory>(
+  {
+    name: {
+      type: String,
+      required: true,
+      minlength: 3,
+      maxlength: 255
+    },
+    description: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 1024
+    }
   },
-  description: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 1024
-  }
-});
+  { timestamps: true }
+);
 
 export const validateCategory = (category: ICategory) => {
   const schema: ObjectSchema<ICategory> = Joi.object<ICategory>({

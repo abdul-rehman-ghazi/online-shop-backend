@@ -22,7 +22,9 @@ export interface IProduct extends Document {
   relatedProductIds: string[];
   reviews: IReview[];
   averageReview: number;
+  sellerId: string;
 }
+
 export interface IProductInput {
   name: string;
   description: string;
@@ -32,58 +34,67 @@ export interface IProductInput {
   relatedProductIds: string[];
 }
 
-const productSchema = new Schema<IProduct>({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
-  },
-  description: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 1024
-  },
-  image: {
-    type: String,
-    minlength: 5,
-    maxlength: 1024,
-    default: 'https://i.stack.imgur.com/y9DpT.jpg'
-  },
-  category: {
-    type: categorySchema,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  variant: {
-    type: variantTypeSchema,
-    default: null
-  },
-  relatedProductIds: {
-    type: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: 'Product'
+const productSchema = new Schema<IProduct>(
+  {
+    name: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 255
+    },
+    description: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 1024
+    },
+    image: {
+      type: String,
+      minlength: 5,
+      maxlength: 1024,
+      default: 'https://i.stack.imgur.com/y9DpT.jpg'
+    },
+    category: {
+      type: categorySchema,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    variant: {
+      type: variantTypeSchema,
+      default: null
+    },
+    relatedProductIds: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product'
+        }
+      ],
+      default: null
+    },
+    reviews: {
+      type: [reviewSchema],
+      default: []
+    },
+    averageReview: {
+      type: Number,
+      default: null,
+      min: 0,
+      max: 5.0
+    },
+    sellerId: {
+      type: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
       }
-    ],
-    default: null
+    }
   },
-  reviews: {
-    type: [reviewSchema],
-    default: []
-  },
-  averageReview: {
-    type: Number,
-    default: null,
-    min: 0,
-    max: 5.0
-  }
-});
+  { timestamps: true }
+);
 
 productSchema.methods.response = function (): Partial<IProduct> {
   return this;

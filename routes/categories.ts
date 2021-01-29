@@ -15,7 +15,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post(
   '/',
-  [auth, hasRole(ERole.ADMIN)],
+  [auth, hasRole([ERole.ADMIN])],
   async (req: Request, res: Response) => {
     const { error } = validateCategory(req.body);
     if (error)
@@ -30,7 +30,7 @@ router.post(
 
 router.put(
   '/:id',
-  [auth, hasRole(ERole.ADMIN)],
+  [auth, hasRole([ERole.ADMIN])],
   async (req: Request, res: Response) => {
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
@@ -57,7 +57,7 @@ router.put(
 
 router.delete(
   '/:id',
-  [auth, hasRole(ERole.ADMIN)],
+  [auth, hasRole([ERole.ADMIN])],
   async (req: Request, res: Response) => {
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));

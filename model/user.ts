@@ -35,55 +35,58 @@ export interface IUserInput {
   gender: EGender;
 }
 
-const userSchema = new Schema<IUser>({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
+const userSchema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 255
+    },
+    status: {
+      type: EStatus,
+      enum: Object.values(EStatus),
+      default: EStatus.ACTIVE
+    },
+    email: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 255,
+      unique: true
+    },
+    phone: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 255
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 1024
+    },
+    role: {
+      type: ERole,
+      enum: Object.values(ERole),
+      default: ERole.CUSTOMER
+    },
+    image: {
+      type: String,
+      minlength: 5,
+      maxlength: 1024,
+      default:
+        'https://www.dlf.pt/dfpng/middlepng/248-2480658_profile-icon-png-image-free-download-searchpng-profile.png'
+    },
+    gender: {
+      type: EGender,
+      enum: Object.values(EGender),
+      required: true
+    }
   },
-  status: {
-    type: EStatus,
-    enum: Object.values(EStatus),
-    default: EStatus.ACTIVE
-  },
-  email: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255,
-    unique: true
-  },
-  phone: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 1024
-  },
-  role: {
-    type: ERole,
-    enum: Object.values(ERole),
-    default: ERole.CUSTOMER
-  },
-  image: {
-    type: String,
-    minlength: 5,
-    maxlength: 1024,
-    default:
-      'https://www.dlf.pt/dfpng/middlepng/248-2480658_profile-icon-png-image-free-download-searchpng-profile.png'
-  },
-  gender: {
-    type: EGender,
-    enum: Object.values(EGender),
-    required: true
-  }
-});
+  { timestamps: true }
+);
 
 userSchema.methods.generateAuthToken = function (): string {
   return jwt.sign(
