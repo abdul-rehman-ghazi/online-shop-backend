@@ -4,7 +4,7 @@ import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
 import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
-import { updateDocument, validateObjectId } from '../util/utils';
+import { validateObjectId } from '../util/utils';
 import Category from '../model/category';
 
 const router = express.Router();
@@ -18,7 +18,7 @@ router.post(
   '/',
   [auth, hasRole([ERole.SELLER, ERole.ADMIN])],
   async (req: Request, res: Response) => {
-    let { error } = validateProduct(req.body);
+    let { error } = validateProduct(req.body, true);
     if (error)
       return res.status(400).send(baseErrorResponse(error.details[0].message));
 
@@ -48,28 +48,34 @@ router.put(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    let product: IProduct = await Product.findById(req.params.id);
-    if (!product)
-      return res
-        .status(404)
-        .send(
-          baseErrorResponse('The product with the given ID was not found.')
-        );
-
     ({ error } = validateProduct(req.body));
     if (error)
       return res.status(400).send(baseErrorResponse(error.details[0].message));
 
-    const category = await Category.findById(req.body.categoryId);
-    if (!category)
-      res.status(400).send(baseErrorResponse('Invalid category id.'));
+    if (req.body.categoryId) {
+      const category = await Category.findById(req.body.categoryId);
+      if (!category)
+        return res.status(400).send(baseErrorResponse('Invalid category id.'));
+    }
 
-    updateDocument<IProduct>(product, Product, req.body);
+    await Product.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    )
+      .populate('category', 'name')
+      .exec((err: any, doc: IProduct | null) => {
+        if (err) return res.status(400).send(baseErrorResponse(err));
 
-    product
-      .save()
-      .then((value: IProduct) => res.send(baseResponse(value)))
-      .catch((reason) => res.status(400).send(baseErrorResponse(reason)));
+        if (!doc)
+          return res
+            .status(404)
+            .send(
+              baseErrorResponse('The product with the given ID was not found.')
+            );
+
+        return res.send(baseResponse(doc));
+      });
   }
 );
 
@@ -98,7 +104,10 @@ router.get('/:id', async (req: Request, res: Response) => {
   const { error } = validateObjectId(req.params.id);
   if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-  const product: IProduct = await Product.findById(req.params.id);
+  const product: IProduct = await Product.findById(req.params.id).populate(
+    'category',
+    'name'
+  );
   if (!product)
     return res
       .status(404)

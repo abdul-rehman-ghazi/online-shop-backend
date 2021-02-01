@@ -20,7 +20,6 @@ export const updateDocument = <T extends Document>(
   for (const field in SchemaTarget.schema.paths) {
     if (field !== '_id' && field !== '__v') {
       const newValue = getObjValue(field, data);
-      console.log('data[' + field + '] = ' + newValue);
       if (newValue !== undefined) {
         setObjValue(field, doc, newValue);
       }

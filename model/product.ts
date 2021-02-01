@@ -96,16 +96,31 @@ productSchema.methods.response = function (): Partial<IProduct> {
   return this;
 };
 
-export const validateProduct = (productInput: IProductInput) => {
-  const schema: ObjectSchema<IProductInput> = Joi.object<IProductInput>({
-    name: Joi.string().min(3).max(255).required(),
-    description: Joi.string().min(3).max(1024).required(),
-    price: Joi.number().min(0).required(),
+export const validateProduct = (
+  productInput: IProductInput,
+  isNew: boolean = false
+) => {
+  let schema = Joi.object<IProductInput>({
+    name: Joi.string().min(3).max(255),
+    description: Joi.string().min(3).max(1024),
+    price: Joi.number().min(0),
     image: Joi.string(),
-    category: JoiObjectId().required(),
-    variant: joiVariantTypeSchema,
+    category: JoiObjectId(),
+    variant: joiVariantTypeSchema.allow(null),
     relatedProductIds: Joi.array().items(JoiObjectId())
   });
+
+  if (isNew) {
+    schema = Joi.object<IProductInput>({
+      name: Joi.string().min(3).max(255).required(),
+      description: Joi.string().min(3).max(1024).required(),
+      price: Joi.number().min(0).required(),
+      image: Joi.string(),
+      category: JoiObjectId().required(),
+      variant: joiVariantTypeSchema.allow(null),
+      relatedProductIds: Joi.array().items(JoiObjectId())
+    });
+  }
 
   return schema.validate(productInput, validationOptions);
 };
