@@ -2,11 +2,14 @@ import { IVariant, joiVariantSchema, variantSchema } from './variant';
 import { Document, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
+import { IProduct } from './product';
+import { cartItemSchema } from './cartItem';
 
 export interface IVariantType extends Document {
   name: string;
   unit?: string;
   variants: IVariant[];
+  setSelected: (selectedId: string) => any[];
 }
 
 export const variantTypeSchema = new Schema<IVariantType>({
@@ -31,6 +34,19 @@ export const variantTypeSchema = new Schema<IVariantType>({
     default: null
   }
 });
+
+variantTypeSchema.methods.setSelected = function (selectedId: string) {
+  const variants: any[] = [];
+  this.variants.forEach((value: IVariant) => {
+    const pojo = value.toObject();
+    if (value._id.equals(selectedId)) {
+      pojo.selected = true;
+    }
+    variants.push(pojo);
+  });
+
+  return variants;
+};
 
 export const joiVariantTypeSchema: ObjectSchema<IVariantType> = Joi.object<IVariantType>(
   {

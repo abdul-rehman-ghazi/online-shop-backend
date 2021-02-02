@@ -8,6 +8,8 @@ import EGender from './enum/EGender';
 import ERole from './enum/ERole';
 import { validationOptions } from '../util/utils';
 import * as _ from 'lodash';
+import { cartItemSchema, ICartItem } from './cartItem';
+import CartItem from '../model/cartItem';
 
 export interface IUser extends Document {
   accessToken: string;
@@ -21,7 +23,7 @@ export interface IUser extends Document {
   image: string;
   gender: EGender;
   addresses: any[];
-  cart: any[];
+  cart: ICartItem[];
   orders: any[];
   response: () => Partial<IUser>;
 }
@@ -83,6 +85,10 @@ const userSchema = new Schema<IUser>(
       type: EGender,
       enum: Object.values(EGender),
       required: true
+    },
+    cart: {
+      type: [cartItemSchema],
+      default: []
     }
   },
   { timestamps: true }

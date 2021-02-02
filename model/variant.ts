@@ -5,6 +5,7 @@ import { ObjectSchema } from 'joi';
 export interface IVariant extends Document {
   price?: number;
   value: string;
+  selected: boolean;
 }
 
 export const variantSchema = new Schema<IVariant>({

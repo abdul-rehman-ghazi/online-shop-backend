@@ -6,6 +6,7 @@ import ERole from '../model/enum/ERole';
 import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
 import { validateObjectId } from '../util/utils';
 import Category from '../model/category';
+import { FilterQuery } from 'mongoose';
 
 const router = express.Router();
 
@@ -58,8 +59,13 @@ router.put(
         return res.status(400).send(baseErrorResponse('Invalid category id.'));
     }
 
-    await Product.findByIdAndUpdate(
-      req.params.id,
+    const conditions: FilterQuery<IProduct> =
+      req.body.user.role == ERole.ADMIN
+        ? { _id: req.params.id }
+        : { _id: req.params.id, sellerId: req.body.user._id };
+
+    await Product.findOneAndUpdate(
+      conditions,
       { $set: req.body },
       { new: true }
     )
