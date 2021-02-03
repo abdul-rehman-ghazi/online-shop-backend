@@ -9,7 +9,7 @@ import ERole from './enum/ERole';
 import { validationOptions } from '../util/utils';
 import * as _ from 'lodash';
 import { cartItemSchema, ICartItem } from './cartItem';
-import CartItem from '../model/cartItem';
+import CartItem from './cartItem';
 
 export interface IUser extends Document {
   accessToken: string;

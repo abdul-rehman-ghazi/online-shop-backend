@@ -6,6 +6,7 @@
     "outDir": "./build",
     "esModuleInterop": true,
     "strict": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "typeRoots": ["src/type/", "node_modules/@types/"]
   }
 }

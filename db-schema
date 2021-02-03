@@ -35,7 +35,7 @@ E-POS Database Collection Structure
 		- deliveryCharges: number
 		- paymentMethod: enum(cod, card)
 		- total: number
-		- recievedBy: string
+		- receivedBy: string
 		- createdAt: date
 		- updatedAt: date
 
@@ -47,7 +47,6 @@ E-POS Database Collection Structure
 	- category
 		- _id: string
 		- name: string 3-255
-	- price: number
 	- variantType
 		- _id: string
 		- name: string 3-255

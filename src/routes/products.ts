@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
   const products = await Product.find()
+    .paginate(req.query)
     .populate('category', 'name')
     .sort('name');
   res.send(baseResponse(products));
