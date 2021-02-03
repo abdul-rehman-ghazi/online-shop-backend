@@ -11,7 +11,9 @@ import { FilterQuery } from 'mongoose';
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const products = await Product.find().sort('name');
+  const products = await Product.find()
+    .populate('category', 'name')
+    .sort('name');
   res.send(baseResponse(products));
 });
 

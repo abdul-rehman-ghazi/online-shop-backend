@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
 
 export interface IVariant extends Document {
-  price?: number;
+  price: number;
   value: string;
   selected: boolean;
 }
@@ -11,7 +11,7 @@ export interface IVariant extends Document {
 export const variantSchema = new Schema<IVariant>({
   price: {
     type: Number,
-    default: null,
+    required: true,
     min: 0
   },
   value: {
@@ -23,6 +23,6 @@ export const variantSchema = new Schema<IVariant>({
 });
 
 export const joiVariantSchema: ObjectSchema<IVariant> = Joi.object<IVariant>({
-  price: Joi.number().min(0),
+  price: Joi.number().min(0).required(),
   value: Joi.string().min(1).max(16).required()
 });

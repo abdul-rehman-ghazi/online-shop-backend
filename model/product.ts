@@ -17,7 +17,6 @@ export interface IProduct extends Document {
   description: string;
   image: string;
   category: string;
-  price: number;
   variant: IVariantType;
   relatedProductIds: string[];
   reviews: IReview[];
@@ -28,7 +27,6 @@ export interface IProduct extends Document {
 export interface IProductInput {
   name: string;
   description: string;
-  price: number;
   image: string;
   category: string;
   variant?: IVariantType;
@@ -59,14 +57,9 @@ const productSchema = new Schema<IProduct>(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category'
     },
-    price: {
-      type: Number,
-      required: true,
-      min: 0
-    },
     variant: {
       type: variantTypeSchema,
-      default: null
+      required: true
     },
     relatedProductIds: [
       {
@@ -103,10 +96,9 @@ export const validateProduct = (
   let schema = Joi.object<IProductInput>({
     name: Joi.string().min(3).max(255),
     description: Joi.string().min(3).max(1024),
-    price: Joi.number().min(0),
     image: Joi.string(),
     category: JoiObjectId(),
-    variant: joiVariantTypeSchema.allow(null),
+    variant: joiVariantTypeSchema,
     relatedProductIds: Joi.array().items(JoiObjectId())
   });
 
@@ -114,10 +106,9 @@ export const validateProduct = (
     schema = Joi.object<IProductInput>({
       name: Joi.string().min(3).max(255).required(),
       description: Joi.string().min(3).max(1024).required(),
-      price: Joi.number().min(0).required(),
       image: Joi.string(),
       category: JoiObjectId().required(),
-      variant: joiVariantTypeSchema.allow(null),
+      variant: joiVariantTypeSchema.required(),
       relatedProductIds: Joi.array().items(JoiObjectId())
     });
   }

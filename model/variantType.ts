@@ -9,13 +9,13 @@ export interface IVariantType extends Document {
   name: string;
   unit?: string;
   variants: IVariant[];
-  setSelected: (selectedId: string) => any[];
+  response: (selectedId: string) => any;
 }
 
 export const variantTypeSchema = new Schema<IVariantType>({
   name: {
     type: String,
-    required: true,
+    default: 'Default',
     minlength: 3,
     maxlength: 255
   },
@@ -28,14 +28,14 @@ export const variantTypeSchema = new Schema<IVariantType>({
   variants: {
     type: [variantSchema],
     validate: {
-      validator: (value: IVariant[]) => value.length > 1,
-      message: 'At-least 2 {PATH} is required.'
+      validator: (value: IVariant[]) => value.length > 0,
+      message: 'At-least 1 {PATH} is required.'
     },
     default: null
   }
 });
 
-variantTypeSchema.methods.setSelected = function (selectedId: string) {
+variantTypeSchema.methods.response = function (selectedId: string) {
   const variants: any[] = [];
   this.variants.forEach((value: IVariant) => {
     const pojo = value.toObject();
@@ -45,13 +45,17 @@ variantTypeSchema.methods.setSelected = function (selectedId: string) {
     variants.push(pojo);
   });
 
-  return variants;
+  return {
+    name: this.name,
+    unit: this.unit,
+    variants: variants
+  };
 };
 
 export const joiVariantTypeSchema: ObjectSchema<IVariantType> = Joi.object<IVariantType>(
   {
-    name: Joi.string().min(3).max(255).required(),
+    name: Joi.string().min(3).max(255),
     unit: Joi.string().min(1).max(16),
-    variants: Joi.array().items(joiVariantSchema).min(2).required()
+    variants: Joi.array().items(joiVariantSchema).min(1).required()
   }
 );

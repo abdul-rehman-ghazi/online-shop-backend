@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { validationOptions } from '../util/utils';
 import { JoiObjectId } from '../startup/validation';
 import { IProduct } from './product';
-import { IVariantType } from './variantType';
+import { IVariant } from './variant';
 
 export interface ICartItem extends Document {
   item: Types.ObjectId | IProduct;
@@ -12,15 +12,6 @@ export interface ICartItem extends Document {
   quantity: number;
   response: () => any;
 }
-
-export interface CartItemResponse {
-  name: string;
-  image: string;
-  price: number;
-  variant: IVariantType;
-  quantity: number;
-}
-
 export const cartItemSchema = new Schema<ICartItem>(
   {
     item: {
@@ -41,13 +32,25 @@ export const cartItemSchema = new Schema<ICartItem>(
   { timestamps: true }
 );
 
+cartItemSchema.index({ item: 1, variantId: 1 }, { unique: true });
+
 cartItemSchema.methods.response = function () {
   const item = this.item as IProduct;
+
+  let price: number = 0;
+  item.variant.variants.forEach((value: IVariant) => {
+    if (value._id.equals(this.variantId)) price += value.price;
+  });
+
+  price = price * this.quantity;
+
   return {
+    _id: this._id,
+    itemId: item._id,
     name: item.name,
     image: item.image,
-    price: item.price,
-    variant: item.variant?.setSelected(this.variantId),
+    price: price,
+    variant: item.variant.response(this.variantId),
     quantity: this.quantity
   };
 };
