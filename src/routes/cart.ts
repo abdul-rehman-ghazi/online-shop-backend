@@ -3,11 +3,11 @@ import User, { IUser } from '../model/user';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../helpers/response';
 import CartItem, { ICartItem, validateCartItem } from '../model/cartItem';
 import Product, { IProduct } from '../model/product';
 import { IVariant } from '../model/variant';
-import { updateDocument, validateObjectId } from '../util/utils';
+import { updateDocument, validateObjectId } from '../helpers/utils';
 
 const router = express.Router();
 

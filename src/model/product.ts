@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Document, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
-import { validationOptions } from '../util/utils';
+import { validationOptions } from '../helpers/utils';
 import { categorySchema, ICategory } from './category';
 import {
   IVariantType,

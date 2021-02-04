@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse } from '../@types/BaseResponse';
+import { baseErrorResponse } from '../helpers/response';
 
 export const hasRole = (roles: ERole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

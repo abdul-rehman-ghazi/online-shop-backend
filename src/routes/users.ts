@@ -3,7 +3,7 @@ import User, { IUser, validateUser } from '../model/user';
 import * as bcrypt from 'bcrypt';
 import { auth } from '../middleware/auth';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../helpers/response';
 
 const router = express.Router();
 

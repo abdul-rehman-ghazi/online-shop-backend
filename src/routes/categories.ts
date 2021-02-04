@@ -3,13 +3,18 @@ import Category, { ICategory, validateCategory } from '../model/category';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
-import { validateObjectId } from '../util/utils';
+import { baseErrorResponse, baseResponse } from '../helpers/response';
+import { validateObjectId } from '../helpers/utils';
+import { paginationResponse } from '../helpers/pagination';
 
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const categories = await Category.find().sort('name');
+  const categories = await paginationResponse<ICategory>(
+    Category,
+    Category.find().sort('name'),
+    req.query
+  );
   res.send(baseResponse(categories));
 });
 

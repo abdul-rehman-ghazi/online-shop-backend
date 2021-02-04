@@ -3,9 +3,9 @@ import User, { IUser } from '../model/user';
 import bcrypt from 'bcrypt';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
-import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../helpers/response';
 import lodash from 'lodash';
-import { validationOptions } from '../util/utils';
+import { validationOptions } from '../helpers/utils';
 
 const router = express.Router();
 

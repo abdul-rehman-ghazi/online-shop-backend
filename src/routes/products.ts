@@ -3,18 +3,20 @@ import Product, { IProduct, validateProduct } from '../model/product';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
-import { validateObjectId } from '../util/utils';
+import { baseErrorResponse, baseResponse } from '../helpers/response';
+import { validateObjectId } from '../helpers/utils';
 import Category, { ICategory } from '../model/category';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, DocumentQuery } from 'mongoose';
+import { paginationResponse } from '../helpers/pagination';
 
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const products = await Product.find()
-    .paginate(req.query)
-    .populate('category', 'name')
-    .sort('name');
+  const products = await paginationResponse<IProduct>(
+    Product,
+    Product.find().populate('category', 'name').sort('name'),
+    req.query
+  );
   res.send(baseResponse(products));
 });
 

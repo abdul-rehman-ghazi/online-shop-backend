@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
-import { validationOptions } from '../util/utils';
+import { validationOptions } from '../helpers/utils';
 
 export interface ICategory extends Document {
   name: string;

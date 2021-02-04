@@ -6,7 +6,7 @@ import config from 'config';
 import EStatus from './enum/EStatus';
 import EGender from './enum/EGender';
 import ERole from './enum/ERole';
-import { validationOptions } from '../util/utils';
+import { validationOptions } from '../helpers/utils';
 import * as _ from 'lodash';
 import { cartItemSchema, ICartItem } from './cartItem';
 import CartItem from './cartItem';
