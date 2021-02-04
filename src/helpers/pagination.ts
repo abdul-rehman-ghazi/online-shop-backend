@@ -1,5 +1,15 @@
 import { Document, DocumentQuery, Model } from 'mongoose';
-import { PaginationRequest, PaginationResponse } from '../model/pagination';
+
+interface PaginationRequest {
+  limit: number;
+  page: number;
+}
+
+interface PaginationResponse {
+  total: number;
+  page: number;
+  lastPage: number;
+}
 
 export const paginationResponse = async <T extends Document>(
   model: Model<T>,

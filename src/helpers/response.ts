@@ -1,11 +1,11 @@
 type Response = {
-  data: any;
+  response: any;
   message: string;
 };
 
 export const baseResponse = (data?: any, message?: string) => {
   const response: Response = {
-    data: data ?? null,
+    response: data ?? null,
     message: message ?? 'Success'
   };
   return response;
@@ -13,7 +13,7 @@ export const baseResponse = (data?: any, message?: string) => {
 
 export const baseErrorResponse = (message?: string) => {
   const response: Response = {
-    data: null,
+    response: null,
     message: message ?? 'Failed'
   };
   return response;

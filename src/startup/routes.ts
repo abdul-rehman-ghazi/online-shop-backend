@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import categories from '../routes/categories';
 import products from '../routes/products';
 import cartItem from '../routes/cart';
+import address from '../routes/address';
 
 export default (app: Express) => {
   app.use(express.json());
@@ -15,5 +16,6 @@ export default (app: Express) => {
   app.use('/api/category', categories);
   app.use('/api/product', products);
   app.use('/api/cart', cartItem);
+  app.use('/api/address', address);
   app.use(error);
 };

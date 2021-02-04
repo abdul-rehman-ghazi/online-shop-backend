@@ -9,7 +9,7 @@ import ERole from './enum/ERole';
 import { validationOptions } from '../helpers/utils';
 import * as _ from 'lodash';
 import { cartItemSchema, ICartItem } from './cartItem';
-import CartItem from './cartItem';
+import { addressSchema, IAddress } from './address';
 
 export interface IUser extends Document {
   accessToken: string;
@@ -22,7 +22,7 @@ export interface IUser extends Document {
   role: ERole;
   image: string;
   gender: EGender;
-  addresses: any[];
+  addresses: IAddress[];
   cart: ICartItem[];
   orders: any[];
   response: () => Partial<IUser>;
@@ -88,6 +88,10 @@ const userSchema = new Schema<IUser>(
     },
     cart: {
       type: [cartItemSchema],
+      default: []
+    },
+    addresses: {
+      type: [addressSchema],
       default: []
     }
   },

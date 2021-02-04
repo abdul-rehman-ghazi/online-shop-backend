@@ -88,6 +88,9 @@ router.put(
   '/:id',
   [auth, hasRole([ERole.CUSTOMER]), validateCartRequest],
   async (req: Request, res: Response) => {
+    let { error } = validateObjectId(req.params.id);
+    if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
+
     const user = req.body.user;
     const cart: ICartItem[] = user.cart;
 
