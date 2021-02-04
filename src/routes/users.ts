@@ -2,14 +2,14 @@ import express, { NextFunction, Request, Response } from 'express';
 import User, { IUser, validateUser } from '../model/user';
 import * as bcrypt from 'bcrypt';
 import { auth } from '../middleware/auth';
-import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
 import ERole from '../model/enum/ERole';
+import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
 
 const router = express.Router();
 
 router.get('/me', auth, async (req: Request, res: Response) => {
-  const user: IUser = await User.findById(req.body.user._id);
-  res.send(baseResponse(user.response()));
+  const user: IUser | null = await User.findById(req.body.user._id);
+  if (user) res.send(baseResponse(user.response()));
 });
 
 const validateSignUpRequest = async (
@@ -21,7 +21,7 @@ const validateSignUpRequest = async (
   if (error)
     return res.status(400).send(baseErrorResponse(error.details[0].message));
 
-  const user: IUser = await User.findOne({ email: req.body.email });
+  const user: IUser | null = await User.findOne({ email: req.body.email });
   if (user)
     return res.status(400).send(baseErrorResponse('User already registered.'));
 

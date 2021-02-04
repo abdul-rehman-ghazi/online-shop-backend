@@ -3,7 +3,7 @@ import User, { IUser } from '../model/user';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
 import CartItem, { ICartItem, validateCartItem } from '../model/cartItem';
 import Product, { IProduct } from '../model/product';
 import { IVariant } from '../model/variant';
@@ -21,7 +21,7 @@ router.get(
       .sort('-updatedAt');
 
     const response: any[] = [];
-    user.cart.forEach((value: ICartItem) => {
+    user?.cart.forEach((value: ICartItem) => {
       response.push(value.response());
     });
     res.send(baseResponse(response));
@@ -37,7 +37,7 @@ const validateCartRequest = async (
   if (error)
     return res.status(400).send(baseErrorResponse(error.details[0].message));
 
-  const product: IProduct = await Product.findById(req.body.item);
+  const product: IProduct | null = await Product.findById(req.body.item);
   if (!product)
     return res.status(404).send(baseErrorResponse('Invalid itemId.'));
 
@@ -48,7 +48,7 @@ const validateCartRequest = async (
   )
     return res.status(404).send(baseErrorResponse('Invalid variantId.'));
 
-  const user: IUser = await User.findById(req.body.user._id);
+  const user: IUser | null = await User.findById(req.body.user._id);
   if (!user) return res.status(400).send(baseErrorResponse('User not found'));
 
   req.body.user = user;
@@ -118,7 +118,7 @@ router.delete(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    let user: IUser = await User.findById(req.body.user._id);
+    let user: IUser | null = await User.findById(req.body.user._id);
     if (!user) return res.status(400).send(baseErrorResponse('User not found'));
 
     user = await user.populate('cart.item').execPopulate();

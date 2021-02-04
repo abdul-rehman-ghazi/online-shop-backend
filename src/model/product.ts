@@ -22,6 +22,7 @@ export interface IProduct extends Document {
   reviews: IReview[];
   averageReview: number;
   sellerId: string;
+  response: () => Partial<IProduct>;
 }
 
 export interface IProductInput {

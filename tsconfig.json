@@ -7,6 +7,10 @@
     "esModuleInterop": true,
     "strict": true,
     "sourceMap": true,
-    "typeRoots": ["src/type/", "node_modules/@types/"]
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/@types/*", "node_modules/@types/*"]
+    }
   }
 }

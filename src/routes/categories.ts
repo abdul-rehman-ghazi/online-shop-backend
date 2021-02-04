@@ -3,7 +3,7 @@ import Category, { ICategory, validateCategory } from '../model/category';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
 import { validateObjectId } from '../util/utils';
 
 const router = express.Router();
@@ -35,7 +35,7 @@ router.put(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    let category: ICategory = await Category.findById(req.params.id);
+    let category: ICategory | null = await Category.findById(req.params.id);
     if (!category)
       return res
         .status(404)
@@ -62,7 +62,7 @@ router.delete(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    const category: ICategory = await Category.findById(req.params.id);
+    const category: ICategory | null = await Category.findById(req.params.id);
     if (!category)
       return res
         .status(404)
@@ -80,7 +80,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   const { error } = validateObjectId(req.params.id);
   if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-  const category: ICategory = await Category.findById(req.params.id);
+  const category: ICategory | null = await Category.findById(req.params.id);
   if (!category)
     return res
       .status(404)

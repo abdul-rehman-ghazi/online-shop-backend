@@ -3,7 +3,7 @@ import User, { IUser } from '../model/user';
 import bcrypt from 'bcrypt';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
-import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
 import lodash from 'lodash';
 import { validationOptions } from '../util/utils';
 
@@ -13,7 +13,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user: IUser = await User.findOne({ email: req.body.email });
+  let user: IUser | null = await User.findOne({ email: req.body.email });
   if (!user)
     return res
       .status(400)

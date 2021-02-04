@@ -3,9 +3,9 @@ import Product, { IProduct, validateProduct } from '../model/product';
 import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
-import { baseErrorResponse, baseResponse } from '../type/BaseResponse';
+import { baseErrorResponse, baseResponse } from '../@types/BaseResponse';
 import { validateObjectId } from '../util/utils';
-import Category from '../model/category';
+import Category, { ICategory } from '../model/category';
 import { FilterQuery } from 'mongoose';
 
 const router = express.Router();
@@ -95,7 +95,7 @@ router.delete(
     let { error } = validateObjectId(req.params.id);
     if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-    const product: IProduct = await Product.findById(req.params.id);
+    const product: IProduct | null = await Product.findById(req.params.id);
     if (!product)
       return res
         .status(404)
@@ -113,10 +113,9 @@ router.get('/:id', async (req: Request, res: Response) => {
   const { error } = validateObjectId(req.params.id);
   if (error) return res.status(400).send(baseErrorResponse('Invalid ID.'));
 
-  const product: IProduct = await Product.findById(req.params.id).populate(
-    'category',
-    'name'
-  );
+  const product: IProduct | null = await Product.findById(
+    req.params.id
+  ).populate('category', 'name');
   if (!product)
     return res
       .status(404)

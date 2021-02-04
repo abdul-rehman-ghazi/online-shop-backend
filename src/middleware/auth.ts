@@ -2,7 +2,7 @@ import config from 'config';
 import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { IUser } from '../model/user';
-import { baseErrorResponse } from '../type/BaseResponse';
+import { baseErrorResponse } from '../@types/BaseResponse';
 
 export const auth = (req: Request, res: Response, next: NextFunction) => {
   const authHeader: string | undefined = req.header('Authorization');
