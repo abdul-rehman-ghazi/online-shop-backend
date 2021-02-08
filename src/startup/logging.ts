@@ -10,14 +10,16 @@ export default () => {
   //       winston.format.prettyPrint()
   //     )
   //   }),
-  //   new winston.transports.File({ filename: 'uncaughtExceptions.log' })
+  //   new winston.transports.File({ filename: 'uncaughtExceptions.log', dirname: 'public' })
   // );
 
   process.on('unhandledRejection', (error: Error) => {
     throw error;
   });
 
-  winston.add(new winston.transports.File({ filename: 'logfile.log' }));
+  winston.add(
+    new winston.transports.File({ filename: 'logfile.log', dirname: 'public' })
+  );
   winston.add(
     new MongoDB({ db: 'mongodb://localhost/practice', level: 'info' })
   );

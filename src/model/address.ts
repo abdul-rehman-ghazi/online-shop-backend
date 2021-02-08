@@ -46,16 +46,16 @@ export const addressSchema = new Schema<IAddress>(
   { timestamps: true }
 );
 
-export const validateAddress = (address: IAddress) => {
-  let schema = Joi.object<IAddress>({
-    label: Joi.string().min(3).max(255).required(),
-    text: Joi.string().min(3).max(1024).required(),
-    latitude: Joi.number().min(-90).max(90).required(),
-    longitude: Joi.number().min(-180).max(180).required(),
-    note: Joi.string().min(3).max(1024)
-  });
+export const addressJoiSchema = Joi.object<IAddress>({
+  label: Joi.string().min(3).max(255).required(),
+  text: Joi.string().min(3).max(1024).required(),
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required(),
+  note: Joi.string().min(3).max(1024)
+});
 
-  return schema.validate(address, validationOptions);
+export const validateAddress = (address: IAddress) => {
+  return addressJoiSchema.validate(address, validationOptions);
 };
 
 export default model<IAddress>('Address', addressSchema);

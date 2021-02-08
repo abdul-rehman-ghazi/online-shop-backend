@@ -54,6 +54,7 @@ E-POS Database Collection Structure
 
 4) Order
     - _id: string
+    - userId: string
 	- items[]
 		- _id: string
 		- name: string 3-255 (name - variant name)
@@ -64,6 +65,13 @@ E-POS Database Collection Structure
 		- dateTime: date
 	- subTotal: number
 	- type: enum(dineIn, collection, delivery)
+	- deliveryAddress
+	    - _id: string
+        - label: string 3-255
+        - text: string 3-1024
+        - latitude: number
+        - longitude: number
+        - note: string 0-1024
 	- deliveryCharges: number
 	- paymentMethod: enum(cod, card)
 	- total: number

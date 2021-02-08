@@ -9,6 +9,7 @@ import cartItem from '../routes/cart';
 import address from '../routes/address';
 
 export default (app: Express) => {
+  app.use(express.static('public'));
   app.use(express.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/user', users);
