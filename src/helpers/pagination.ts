@@ -53,7 +53,7 @@ export const listPaginationResponse = <T>(data: T[], queryMap: any) => {
     const totalDocumentsCount = data.length;
     let lastPage = 1;
     if (totalDocumentsCount > paginationRequest.limit)
-      lastPage = totalDocumentsCount / paginationRequest.limit;
+      lastPage = Math.ceil(totalDocumentsCount / paginationRequest.limit);
     paginationResponse = {
       total: totalDocumentsCount,
       page: paginationRequest.page,
@@ -61,8 +61,9 @@ export const listPaginationResponse = <T>(data: T[], queryMap: any) => {
     };
 
     data = data.slice(
-      paginationRequest.limit * paginationRequest.page,
-      paginationRequest.limit * paginationRequest.page + paginationRequest.limit
+      paginationRequest.limit * (paginationRequest.page - 1),
+      paginationRequest.limit * (paginationRequest.page - 1) +
+        paginationRequest.limit
     );
   }
 

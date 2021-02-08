@@ -39,7 +39,8 @@ export const addressSchema = new Schema<IAddress>(
     note: {
       type: String,
       minlength: 3,
-      maxlength: 1024
+      maxlength: 1024,
+      default: null
     }
   },
   { timestamps: true }
