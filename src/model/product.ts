@@ -1,9 +1,7 @@
 import * as mongoose from 'mongoose';
-import { Document, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import * as Joi from 'joi';
-import { ObjectSchema } from 'joi';
 import { validationOptions } from '../helpers/utils';
-import { categorySchema, ICategory } from './category';
 import {
   IVariantType,
   joiVariantTypeSchema,
@@ -11,8 +9,9 @@ import {
 } from './variantType';
 import { IReview, reviewSchema } from './review';
 import { JoiObjectId } from '../startup/validation';
+import mongoose_delete, { SoftDeleteDocument } from 'mongoose-delete';
 
-export interface IProduct extends Document {
+export interface IProduct extends SoftDeleteDocument {
   name: string;
   description: string;
   image: string;
@@ -89,6 +88,8 @@ const productSchema = new Schema<IProduct>(
 productSchema.methods.response = function (): Partial<IProduct> {
   return this;
 };
+
+productSchema.plugin(mongoose_delete, { deletedAt: true });
 
 export const validateProduct = (
   productInput: IProductInput,

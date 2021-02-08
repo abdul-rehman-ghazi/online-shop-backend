@@ -1,9 +1,10 @@
-import { Document, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
 import { validationOptions } from '../helpers/utils';
+import mongoose_delete, { SoftDeleteDocument } from 'mongoose-delete';
 
-export interface ICategory extends Document {
+export interface ICategory extends SoftDeleteDocument {
   name: string;
   description: string;
 }
@@ -25,6 +26,8 @@ export const categorySchema = new Schema<ICategory>(
   },
   { timestamps: true }
 );
+
+categorySchema.plugin(mongoose_delete, { deletedAt: true });
 
 export const validateCategory = (category: ICategory) => {
   const schema: ObjectSchema<ICategory> = Joi.object<ICategory>({

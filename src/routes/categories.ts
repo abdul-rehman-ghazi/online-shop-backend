@@ -75,7 +75,7 @@ router.delete(
           baseErrorResponse('The category with the given ID was not found.')
         );
 
-    await category.deleteOne();
+    await category.delete();
 
     res.send(category);
   }

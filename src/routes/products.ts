@@ -105,7 +105,7 @@ router.delete(
           baseErrorResponse('The product with the given ID was not found.')
         );
 
-    await product.deleteOne();
+    await product.delete();
 
     res.send(product);
   }

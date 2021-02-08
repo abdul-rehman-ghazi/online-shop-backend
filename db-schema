@@ -20,24 +20,6 @@ E-POS Database Collection Structure
 		- itemId: string
 		- variantId: string
 		- quantity: number
-	- orders[]
-		- _id: string
-		- items[]
-			- _id: string
-			- name: string 3-255 (name - variant name)
-			- price: number
-			- quantity: number
-		- statuses[]
-			- status: enum(pending, accepted, ready, delivered, cancelled)
-			- dateTime: date
-		- subTotal: number
-		- type: enum(dineIn, collection, delivery)
-		- deliveryCharges: number
-		- paymentMethod: enum(cod, card)
-		- total: number
-		- receivedBy: string
-		- createdAt: date
-		- updatedAt: date
 
 2) Product
 	- _id: string
@@ -69,3 +51,22 @@ E-POS Database Collection Structure
 	- _id: string
 	- name: string 3-255
 	- description: string 3-1024
+
+4) Order
+    - _id: string
+	- items[]
+		- _id: string
+		- name: string 3-255 (name - variant name)
+		- price: number
+		- quantity: number
+	- statuses[]
+		- status: enum(pending, accepted, ready, delivered, cancelled)
+		- dateTime: date
+	- subTotal: number
+	- type: enum(dineIn, collection, delivery)
+	- deliveryCharges: number
+	- paymentMethod: enum(cod, card)
+	- total: number
+	- receivedBy: string
+	- createdAt: date
+	- updatedAt: date

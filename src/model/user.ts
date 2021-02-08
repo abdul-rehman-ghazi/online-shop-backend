@@ -10,6 +10,7 @@ import { validationOptions } from '../helpers/utils';
 import * as _ from 'lodash';
 import { cartItemSchema, ICartItem } from './cartItem';
 import { addressSchema, IAddress } from './address';
+import mongoose_delete from 'mongoose-delete';
 
 export interface IUser extends Document {
   accessToken: string;
@@ -24,7 +25,6 @@ export interface IUser extends Document {
   gender: EGender;
   addresses: IAddress[];
   cart: ICartItem[];
-  orders: any[];
   response: () => Partial<IUser>;
 }
 
@@ -118,6 +118,8 @@ userSchema.methods.response = function (): Partial<IUser> {
     'role'
   ]);
 };
+
+userSchema.plugin(mongoose_delete, { deletedAt: true });
 
 export const validateUser = (userInput: IUserInput) => {
   const schema: ObjectSchema<IUserInput> = Joi.object<IUserInput>({
