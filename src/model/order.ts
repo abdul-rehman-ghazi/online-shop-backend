@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { HookNextFunction, model, Schema } from 'mongoose';
+import { Model, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { validationOptions } from '../helpers/utils';
 import mongoose_delete, { SoftDeleteDocument } from 'mongoose-delete';
@@ -11,6 +11,7 @@ import { addressSchema, IAddress } from './address';
 import User from '../model/user';
 import { JoiObjectId } from '../startup/validation';
 import { ICartItemResponse } from './cartItem';
+import EOrderStatus from './enum/EOrderStatus';
 
 export interface IOrder extends SoftDeleteDocument {
   userId: string;
@@ -18,11 +19,11 @@ export interface IOrder extends SoftDeleteDocument {
   statuses: IOrderStatus[];
   subtotal: number;
   type: EOrderType;
-  deliveryAddress: IAddress | string;
+  deliveryAddress?: IAddress;
   deliveryCharges: number;
   paymentMethod: EPaymentType;
   total: number;
-  receivedBy: string;
+  receivedBy?: string;
   response: () => Partial<IOrder>;
 }
 
@@ -61,7 +62,7 @@ const orderSchema = new Schema<IOrder>(
     },
     deliveryAddress: {
       type: addressSchema,
-      required: true
+      default: null
     },
     deliveryCharges: {
       type: Number,
@@ -92,35 +93,45 @@ orderSchema.methods.response = function (): Partial<IOrder> {
   return this;
 };
 
-orderSchema.pre<IOrder>('save', async function (next: HookNextFunction) {
-  const carts: ICartItemResponse[] = await User.getCarts(this.userId);
-  this.items = [];
-  this.subtotal = 0;
+export const toOrder = async (orderInput: IOrderInput, userId: string) => {
+  const carts: ICartItemResponse[] = await User.getCarts(userId);
+  const items: IOrderItem[] = [];
+  let subtotal = 0;
+  const statuses = [{ status: EOrderStatus.PENDING }];
   carts.forEach((cartItem: ICartItemResponse) => {
     const orderItem: IOrderItem = {
+      itemId: cartItem.itemId,
       name: `${cartItem.name} - ${
         cartItem.variant.variants.find((value1) => value1.selected)?.value
       }`,
       price: cartItem.price,
       quantity: cartItem.quantity
     };
-    this.items.push(orderItem);
-    this.subtotal += orderItem.price;
+    items.push(orderItem);
+    subtotal += orderItem.price;
   });
-  this.deliveryCharges = 0;
-  if (this.type == EOrderType.DELIVERY) {
-    this.deliveryAddress = await User.getAddress(
-      this.userId,
-      this.deliveryAddress as string
-    );
-    if (!this.deliveryAddress) next(new Error('Invalid delivery address'));
+  let deliveryCharges = 0;
+  let deliveryAddress = undefined;
+  if (orderInput.type == EOrderType.DELIVERY) {
+    deliveryAddress = await User.getAddress(userId, orderInput.deliveryAddress);
+    if (!deliveryAddress) throw new Error('Invalid delivery address');
     // todo: get delivery charges from settings
-    this.deliveryCharges = 10;
+    deliveryCharges = 10;
   }
-  this.total = this.subtotal + this.deliveryCharges;
+  const total = subtotal + deliveryCharges;
 
-  next();
-});
+  return new Order({
+    userId: userId,
+    items: items,
+    statuses: statuses,
+    subtotal: subtotal,
+    type: orderInput.type,
+    deliveryAddress: deliveryAddress,
+    deliveryCharges: deliveryCharges,
+    paymentMethod: orderInput.paymentMethod,
+    total: total
+  });
+};
 
 orderSchema.plugin(mongoose_delete, { deletedAt: true });
 
@@ -129,7 +140,7 @@ export const validateOrder = (orderInput: IOrderInput) => {
     type: Joi.string()
       .valid(...Object.values(EOrderType))
       .required(),
-    deliveryAddress: Joi.alternatives().conditional('type', {
+    deliveryAddress: Joi.when('type', {
       is: EOrderType.DELIVERY,
       then: JoiObjectId().required()
     }),
@@ -141,4 +152,6 @@ export const validateOrder = (orderInput: IOrderInput) => {
   return schema.validate(orderInput, validationOptions);
 };
 
-export default model<IOrder>('Order', orderSchema);
+const Order: Model<IOrder> = model<IOrder>('Order', orderSchema);
+
+export default Order;

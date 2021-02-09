@@ -57,6 +57,7 @@ E-POS Database Collection Structure
     - userId: string
 	- items[]
 		- _id: string
+		- itemId: string
 		- name: string 3-255 (name - variant name)
 		- price: number
 		- quantity: number

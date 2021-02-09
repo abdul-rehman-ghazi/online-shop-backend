@@ -36,9 +36,11 @@ export const variantTypeSchema = new Schema<IVariantType>({
 });
 
 variantTypeSchema.methods.response = function (selectedId: string) {
-  this.variants.find((value: IVariant) => {
-    value._id.equals(selectedId);
-  })!.selected = true;
+  const selectedVariant = this.variants.find((value: IVariant) =>
+    value._id.equals(selectedId)
+  );
+
+  if (selectedVariant) selectedVariant.selected = true;
 
   return this;
 };

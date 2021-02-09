@@ -1,28 +1,23 @@
 import { Schema } from 'mongoose';
 import * as Joi from 'joi';
 import EOrderStatus from './enum/EOrderStatus';
-import EGender from './enum/EGender';
 
 export interface IOrderStatus {
   status: EOrderStatus;
-  date: Date;
+  date?: Date;
 }
 
-export const orderStatusSchema = new Schema<IOrderStatus>(
-  {
-    status: {
-      type: String,
-      enum: EOrderStatus,
-      required: true
-    },
-    date: {
-      type: Date,
-      required: true,
-      default: Date.now()
-    }
+export const orderStatusSchema = new Schema<IOrderStatus>({
+  status: {
+    type: String,
+    enum: EOrderStatus,
+    required: true
   },
-  { timestamps: true }
-);
+  date: {
+    type: Date,
+    default: Date.now()
+  }
+});
 
 export const orderStatusJoiSchema = Joi.object<IOrderStatus>({
   status: Joi.string()

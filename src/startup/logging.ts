@@ -21,6 +21,10 @@ export default () => {
     new winston.transports.File({ filename: 'logfile.log', dirname: 'public' })
   );
   winston.add(
-    new MongoDB({ db: 'mongodb://localhost/practice', level: 'info' })
+    new MongoDB({
+      db: 'mongodb://localhost/practice',
+      level: 'info',
+      options: { useUnifiedTopology: true }
+    })
   );
 };

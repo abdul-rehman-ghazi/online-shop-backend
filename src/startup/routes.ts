@@ -7,6 +7,7 @@ import categories from '../routes/categories';
 import products from '../routes/products';
 import cartItem from '../routes/cart';
 import address from '../routes/address';
+import orders from '../routes/orders';
 
 export default (app: Express) => {
   app.use(express.static('public'));
@@ -18,5 +19,6 @@ export default (app: Express) => {
   app.use('/api/product', products);
   app.use('/api/cart', cartItem);
   app.use('/api/address', address);
+  app.use('/api/order', orders);
   app.use(error);
 };

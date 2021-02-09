@@ -50,9 +50,9 @@ cartItemSchema.methods.response = function () {
   const item = this.item as IProduct;
 
   let price: number =
-    item.variant.variants.find((value: IVariant) => {
-      value._id.equals(this.variantId);
-    })?.price ?? 0; // selected variant price / unit price
+    item.variant.variants.find((value: IVariant) =>
+      value._id.equals(this.variantId)
+    )?.price ?? 0; // selected variant price / unit price
 
   price = price * this.quantity; // total price
 
