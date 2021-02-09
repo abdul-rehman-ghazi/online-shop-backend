@@ -1,14 +1,16 @@
 import * as mongoose from 'mongoose';
-import { model, Schema } from 'mongoose';
+import { HookNextFunction, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { validationOptions } from '../helpers/utils';
 import mongoose_delete, { SoftDeleteDocument } from 'mongoose-delete';
-import EOrderStatus from './enum/EOrderStatus';
 import EOrderType from './enum/EOrderType';
 import EPaymentType from './enum/EPaymentType';
 import { IOrderItem, orderItemSchema } from './orderItem';
 import { IOrderStatus, orderStatusSchema } from './orderStatus';
-import { addressJoiSchema, addressSchema, IAddress } from './address';
+import { addressSchema, IAddress } from './address';
+import User from '../model/user';
+import { JoiObjectId } from '../startup/validation';
+import { ICartItemResponse } from './cartItem';
 
 export interface IOrder extends SoftDeleteDocument {
   userId: string;
@@ -16,7 +18,7 @@ export interface IOrder extends SoftDeleteDocument {
   statuses: IOrderStatus[];
   subtotal: number;
   type: EOrderType;
-  deliveryAddress: IAddress;
+  deliveryAddress: IAddress | string;
   deliveryCharges: number;
   paymentMethod: EPaymentType;
   total: number;
@@ -26,7 +28,7 @@ export interface IOrder extends SoftDeleteDocument {
 
 export interface IOrderInput {
   type: EOrderType;
-  deliveryAddress: IAddress;
+  deliveryAddress: string;
   paymentMethod: EPaymentType;
 }
 
@@ -90,6 +92,36 @@ orderSchema.methods.response = function (): Partial<IOrder> {
   return this;
 };
 
+orderSchema.pre<IOrder>('save', async function (next: HookNextFunction) {
+  const carts: ICartItemResponse[] = await User.getCarts(this.userId);
+  this.items = [];
+  this.subtotal = 0;
+  carts.forEach((cartItem: ICartItemResponse) => {
+    const orderItem: IOrderItem = {
+      name: `${cartItem.name} - ${
+        cartItem.variant.variants.find((value1) => value1.selected)?.value
+      }`,
+      price: cartItem.price,
+      quantity: cartItem.quantity
+    };
+    this.items.push(orderItem);
+    this.subtotal += orderItem.price;
+  });
+  this.deliveryCharges = 0;
+  if (this.type == EOrderType.DELIVERY) {
+    this.deliveryAddress = await User.getAddress(
+      this.userId,
+      this.deliveryAddress as string
+    );
+    if (!this.deliveryAddress) next(new Error('Invalid delivery address'));
+    // todo: get delivery charges from settings
+    this.deliveryCharges = 10;
+  }
+  this.total = this.subtotal + this.deliveryCharges;
+
+  next();
+});
+
 orderSchema.plugin(mongoose_delete, { deletedAt: true });
 
 export const validateOrder = (orderInput: IOrderInput) => {
@@ -97,7 +129,10 @@ export const validateOrder = (orderInput: IOrderInput) => {
     type: Joi.string()
       .valid(...Object.values(EOrderType))
       .required(),
-    deliveryAddress: addressJoiSchema,
+    deliveryAddress: Joi.alternatives().conditional('type', {
+      is: EOrderType.DELIVERY,
+      then: JoiObjectId().required()
+    }),
     paymentMethod: Joi.string()
       .valid(...Object.values(EPaymentType))
       .required()

@@ -1,4 +1,4 @@
-import { Document, model, Schema } from 'mongoose';
+import { Document, Model, model, Schema } from 'mongoose';
 import * as Joi from 'joi';
 import { ObjectSchema } from 'joi';
 import jwt from 'jsonwebtoken';
@@ -8,7 +8,7 @@ import EGender from './enum/EGender';
 import ERole from './enum/ERole';
 import { validationOptions } from '../helpers/utils';
 import * as _ from 'lodash';
-import { cartItemSchema, ICartItem } from './cartItem';
+import { cartItemSchema, ICartItem, ICartItemResponse } from './cartItem';
 import { addressSchema, IAddress } from './address';
 import mongoose_delete from 'mongoose-delete';
 
@@ -26,6 +26,11 @@ export interface IUser extends Document {
   addresses: IAddress[];
   cart: ICartItem[];
   response: () => Partial<IUser>;
+}
+
+export interface IUserModel extends Model<IUser> {
+  getCarts: (id: string) => Promise<ICartItemResponse[]>;
+  getAddress: (id: string, addressId: string) => Promise<IAddress>;
 }
 
 export interface IUserInput {
@@ -119,6 +124,20 @@ userSchema.methods.response = function (): Partial<IUser> {
   ]);
 };
 
+userSchema.statics.getCarts = async function (id: string) {
+  const user = await this.findById(id).select('cart').populate('cart.item');
+  const response: ICartItemResponse[] = [];
+  user?.cart.forEach((value: ICartItem) => {
+    response.push(value.response());
+  });
+  return response;
+};
+
+userSchema.statics.getAddress = async function (id: string, addressId: string) {
+  const user = await this.findById(id).select('addresses');
+  return user.addresses.find((value: IAddress) => value._id.equals(addressId));
+};
+
 userSchema.plugin(mongoose_delete, { deletedAt: true });
 
 export const validateUser = (userInput: IUserInput) => {
@@ -135,5 +154,6 @@ export const validateUser = (userInput: IUserInput) => {
 
   return schema.validate(userInput, validationOptions);
 };
+const userModel: IUserModel = model<IUser, IUserModel>('User', userSchema);
 
-export default model<IUser>('User', userSchema);
+export default userModel;

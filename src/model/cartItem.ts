@@ -5,13 +5,25 @@ import { validationOptions } from '../helpers/utils';
 import { JoiObjectId } from '../startup/validation';
 import { IProduct } from './product';
 import { IVariant } from './variant';
+import { IVariantType } from './variantType';
+
+export interface ICartItemResponse {
+  _id: string;
+  itemId: string;
+  name: string;
+  image: string;
+  price: number;
+  variant: IVariantType;
+  quantity: number;
+}
 
 export interface ICartItem extends Document {
   item: Types.ObjectId | IProduct;
   variantId: string;
   quantity: number;
-  response: () => any;
+  response: () => ICartItemResponse;
 }
+
 export const cartItemSchema = new Schema<ICartItem>(
   {
     item: {
@@ -37,12 +49,12 @@ cartItemSchema.index({ item: 1, variantId: 1 }, { unique: true });
 cartItemSchema.methods.response = function () {
   const item = this.item as IProduct;
 
-  let price: number = 0;
-  item.variant.variants.forEach((value: IVariant) => {
-    if (value._id.equals(this.variantId)) price += value.price;
-  });
+  let price: number =
+    item.variant.variants.find((value: IVariant) => {
+      value._id.equals(this.variantId);
+    })?.price ?? 0; // selected variant price / unit price
 
-  price = price * this.quantity;
+  price = price * this.quantity; // total price
 
   return {
     _id: this._id,

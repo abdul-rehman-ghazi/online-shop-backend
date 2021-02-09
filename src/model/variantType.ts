@@ -9,7 +9,7 @@ export interface IVariantType extends Document {
   name: string;
   unit?: string;
   variants: IVariant[];
-  response: (selectedId: string) => any;
+  response: (selectedId: string) => IVariantType;
 }
 
 export const variantTypeSchema = new Schema<IVariantType>({
@@ -36,20 +36,11 @@ export const variantTypeSchema = new Schema<IVariantType>({
 });
 
 variantTypeSchema.methods.response = function (selectedId: string) {
-  const variants: any[] = [];
-  this.variants.forEach((value: IVariant) => {
-    const pojo = value.toObject();
-    if (value._id.equals(selectedId)) {
-      pojo.selected = true;
-    }
-    variants.push(pojo);
-  });
+  this.variants.find((value: IVariant) => {
+    value._id.equals(selectedId);
+  })!.selected = true;
 
-  return {
-    name: this.name,
-    unit: this.unit,
-    variants: variants
-  };
+  return this;
 };
 
 export const joiVariantTypeSchema: ObjectSchema<IVariantType> = Joi.object<IVariantType>(

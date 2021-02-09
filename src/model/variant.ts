@@ -19,6 +19,9 @@ export const variantSchema = new Schema<IVariant>({
     required: true,
     minlength: 1,
     maxlength: 16
+  },
+  selected: {
+    type: Boolean
   }
 });
 

@@ -4,7 +4,11 @@ import { auth } from '../middleware/auth';
 import { hasRole } from '../middleware/hasRole';
 import ERole from '../model/enum/ERole';
 import { baseErrorResponse, baseResponse } from '../helpers/response';
-import CartItem, { ICartItem, validateCartItem } from '../model/cartItem';
+import CartItem, {
+  ICartItem,
+  ICartItemResponse,
+  validateCartItem
+} from '../model/cartItem';
 import Product, { IProduct } from '../model/product';
 import { IVariant } from '../model/variant';
 import { updateDocument, validateObjectId } from '../helpers/utils';
@@ -15,16 +19,8 @@ router.get(
   '/',
   [auth, hasRole([ERole.CUSTOMER])],
   async (req: Request, res: Response) => {
-    const user = await User.findById(req.body.user._id)
-      .select('cart')
-      .populate('cart.item')
-      .sort('-updatedAt');
-
-    const response: any[] = [];
-    user?.cart.forEach((value: ICartItem) => {
-      response.push(value.response());
-    });
-    res.send(baseResponse(response));
+    const carts: ICartItemResponse[] = await User.getCarts(req.body.user._id);
+    res.send(baseResponse(carts));
   }
 );
 
@@ -132,7 +128,7 @@ router.delete(
 
     if (deleteCartItem) {
       user.cart = user.cart.filter(
-        (value: ICartItem) => value._id != deleteCartItem._id
+        (value: ICartItem) => value._id != deleteCartItem?._id
       );
     } else {
       return res.status(400).send(baseErrorResponse('Invalid Id.'));
