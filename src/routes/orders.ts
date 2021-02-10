@@ -12,6 +12,7 @@ import { baseErrorResponse, baseResponse } from '../helpers/response';
 import { validateObjectId } from '../helpers/utils';
 import { paginationResponse } from '../helpers/pagination';
 import { FilterQuery } from 'mongoose';
+import { sendNotification } from '../helpers/fcm';
 
 const router = express.Router();
 
@@ -67,7 +68,7 @@ router.put(
     await Order.findOneAndUpdate(
       { _id: req.params.id },
       { $push: { statuses: { date: new Date(), status: req.body.status } } },
-      { new: true }
+      { new: true, useFindAndModify: false }
     ).exec((err: any, doc: IOrder | null) => {
       if (err) return res.status(400).send(baseErrorResponse(err));
 
@@ -78,6 +79,14 @@ router.put(
             baseErrorResponse('The order with the given ID was not found.')
           );
 
+      sendNotification(
+        doc._id,
+        `Order #${doc._id}`,
+        `Order status have been updated to ${
+          doc.statuses[doc.statuses.length - 1].status
+        }`,
+        { _id: doc._id.toString() }
+      );
       return res.send(baseResponse(doc));
     });
   }

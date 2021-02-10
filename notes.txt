@@ -1,0 +1,8 @@
+To-Do:
+1) Account activation through email
+2) Set and update profile picture
+3) Update User details
+
+ENV:
+e_pos_jwtPrivateKey=jwtSecretKey;PORT=5000;GOOGLE_APPLICATION_CREDENTIALS=/home/android-02/WebstormProjects/e-pos/epos-service-key.json
+
