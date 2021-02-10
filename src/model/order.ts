@@ -33,6 +33,10 @@ export interface IOrderInput {
   paymentMethod: EPaymentType;
 }
 
+export interface IOrderStatusInput {
+  status: EOrderStatus;
+}
+
 const orderSchema = new Schema<IOrder>(
   {
     userId: {
@@ -150,6 +154,16 @@ export const validateOrder = (orderInput: IOrderInput) => {
   });
 
   return schema.validate(orderInput, validationOptions);
+};
+
+export const validateOrderStatus = (orderStatusInput: IOrderStatusInput) => {
+  const schema = Joi.object<IOrderStatusInput>({
+    status: Joi.string()
+      .valid(...Object.values(EOrderStatus))
+      .required()
+  });
+
+  return schema.validate(orderStatusInput, validationOptions);
 };
 
 const Order: Model<IOrder> = model<IOrder>('Order', orderSchema);
