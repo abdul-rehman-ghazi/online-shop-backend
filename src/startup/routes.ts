@@ -8,6 +8,7 @@ import products from '../routes/products';
 import cartItem from '../routes/cart';
 import address from '../routes/address';
 import orders from '../routes/orders';
+import reviews from '../routes/reviews';
 
 export default (app: Express) => {
   app.use(express.static('public'));
@@ -20,5 +21,6 @@ export default (app: Express) => {
   app.use('/api/cart', cartItem);
   app.use('/api/address', address);
   app.use('/api/order', orders);
+  app.use('/api/review', reviews);
   app.use(error);
 };

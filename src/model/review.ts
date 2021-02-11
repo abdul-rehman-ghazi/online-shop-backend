@@ -2,8 +2,10 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 import Joi from 'joi';
 import { JoiObjectId } from '../startup/validation';
+import { validationOptions } from '../helpers/utils';
 
 export interface IReview extends Document {
+  productId: string;
   userId: string;
   rating: number;
   text: string;
@@ -34,10 +36,11 @@ export const reviewSchema = new Schema<IReview>(
 
 export const validateReview = (review: IReview) => {
   const schema: Joi.ObjectSchema<IReview> = Joi.object<IReview>({
+    productId: JoiObjectId().required(),
     userId: JoiObjectId().required(),
     rating: Joi.number().min(0).max(5.0).required(),
     text: Joi.string().min(3).max(1024).required()
   });
 
-  return schema.validate(review);
+  return schema.validate(review, validationOptions);
 };
