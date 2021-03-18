@@ -4,5 +4,5 @@ To-Do:
 3) Update User details
 
 ENV:
-e_pos_jwtPrivateKey=jwtSecretKey;PORT=5000;GOOGLE_APPLICATION_CREDENTIALS=/home/android-02/WebstormProjects/e-pos/epos-service-key.json
+e_pos_jwtPrivateKey=jwtSecretKey;PORT=5000;GOOGLE_APPLICATION_CREDENTIALS=./epos-service-key.json
 
